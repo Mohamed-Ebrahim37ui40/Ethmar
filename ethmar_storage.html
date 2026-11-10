@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0d9488">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ethmar Storage">
+  <meta name="description" content="إدارة مواقع التخزين - Ethmar Storage Location">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
+  <title>Ethmar Storage Location</title>
+  <style>
+    :root {
+      --primary: #0d9488;
+      --primary-dark: #0f766e;
+      --bg: #f0fdfa;
+      --card: #ffffff;
+      --border: #99f6e4;
+      --text: #134e4a;
+      --muted: #5eead4;
+      --danger: #ef4444;
+      --success: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ccfbf1 0%, #f0fdfa 50%, #e0f2fe 100%);
+      min-height: 100vh;
+      color: var(--text);
+      padding: 20px;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .logo {
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 12px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #0d9488, #0f766e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 18px rgba(13, 148, 136, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo svg {
+      width: 48px;
+      height: 48px;
+    }
+
+    .logo::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    header h1 {
+      font-size: 1.85rem;
+      color: var(--primary-dark);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    header p {
+      color: #64748b;
+      font-size: 1rem;
+    }
+
+    .install-banner {
+      display: none;
+      background: #ecfdf5;
+      border: 2px solid #99f6e4;
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .install-banner.show {
+      display: flex;
+    }
+
+    .install-banner p {
+      font-size: 1.05rem;
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 22px;
+      background: var(--card);
+      padding: 8px;
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(13, 148, 136, 0.12);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 12px 16px;
+      border: none;
+      background: transparent;
+      border-radius: 10px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: #64748b;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 3px 10px rgba(13, 148, 136, 0.35);
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: #f0fdfa;
+      color: var(--primary-dark);
+    }
+
+    .tab-content {
+      display: none;
+      background: var(--card);
+      border-radius: 18px;
+      padding: 26px;
+      box-shadow: 0 6px 24px rgba(13, 148, 136, 0.14);
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 1.05rem;
+    }
+
+    th, td {
+      padding: 13px 16px;
+      text-align: center;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      background: linear-gradient(90deg, #0d9488, #14b8a6);
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      position: sticky;
+      top: 0;
+    }
+
+    tr:nth-child(even) {
+      background: #f0fdfa;
+    }
+
+    tr:hover {
+      background: #ccfbf1;
+    }
+
+    td strong {
+      font-size: 1.1rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #94a3b8;
+      font-size: 1.1rem;
+    }
+
+    .form-section {
+      margin-bottom: 28px;
+    }
+
+    .form-section h3 {
+      margin-bottom: 14px;
+      color: var(--primary-dark);
+      font-size: 1.2rem;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 11px 14px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      transition: border-color 0.2s;
+      direction: ltr;
+      text-align: center;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .btn {
+      padding: 11px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: var(--danger);
+      padding: 10px 16px;
+      font-size: 1rem;
+    }
+
+    .btn-danger:hover {
+      background: #fecaca;
+    }
+
+    .btn-edit {
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 10px 16px;
+      font-size: 1rem;
+      margin-left: 8px;
+    }
+
+    .btn-edit:hover {
+      background: #bae6fd;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .msg {
+      padding: 14px 18px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+      display: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .msg.success {
+      background: #d1fae5;
+      color: #065f46;
+      display: block;
+    }
+
+    .msg.error {
+      background: #fee2e2;
+      color: #991b1b;
+      display: block;
+    }
+
+    .count-badge {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      font-size: 0.95rem;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-right: 10px;
+    }
+
+    .edit-row {
+      background: #fef3c7 !important;
+    }
+
+    .search-box {
+      margin-bottom: 18px;
+    }
+
+    .search-box input {
+      width: 100%;
+      max-width: 340px;
+      padding: 11px 14px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 1.05rem;
+      direction: ltr;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 24px;
+      color: #94a3b8;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      body { font-size: 15px; padding: 14px; }
+      header h1 { font-size: 1.55rem; }
+      .logo { width: 68px; height: 68px; border-radius: 16px; }
+      .logo svg { width: 42px; height: 42px; }
+      .form-row { flex-direction: column; }
+      th, td { padding: 12px 10px; font-size: 1rem; }
+      .tab-btn { font-size: 1rem; padding: 11px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <!-- شعار مقترح: حرف E داخل شكل مخزن/صندوق مع تدرج أخضر -->
+      <div class="logo" title="Ethmar Storage">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- صندوق تخزين -->
+          <rect x="10" y="18" width="44" height="34" rx="4" fill="white" opacity="0.95"/>
+          <path d="M10 26h44" stroke="#0d9488" stroke-width="2.5"/>
+          <path d="M32 18v42" stroke="#0d9488" stroke-width="2"/>
+          <!-- حرف E -->
+          <path d="M22 34h12M22 34v12h12M22 40h9" stroke="#0f766e" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- فتحة علوية -->
+          <rect x="20" y="12" width="24" height="8" rx="2" fill="white" opacity="0.9"/>
+        </svg>
+      </div>
+      <h1>Ethmar Storage Location</h1>
+      <p>إدارة مواقع التخزين — عرض وتعديل وإضافة</p>
+    </header>
+
+    <div id="installBanner" class="install-banner">
+      <p>ثبّت التطبيق على جهازك للاستخدام بدون إنترنت</p>
+      <button class="btn btn-primary" id="installBtn" style="padding:10px 18px;font-size:1rem;">تثبيت</button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('view')">عرض البيانات</button>
+      <button class="tab-btn" onclick="switchTab('edit')">تعديل وإضافة</button>
+    </div>
+
+    <!-- تبويب العرض -->
+    <div id="view-tab" class="tab-content active">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="بحث بـ R# أو رقم الـ Pivot..." oninput="renderViewTable()">
+      </div>
+      <div id="viewTableContainer"></div>
+    </div>
+
+    <!-- تبويب التعديل -->
+    <div id="edit-tab" class="tab-content">
+      <div id="msgBox" class="msg"></div>
+
+      <div class="form-section">
+        <h3 id="formTitle">إضافة صف جديد</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pivotNo">Pivot no.</label>
+            <input type="number" id="pivotNo" placeholder="مثال: 14" min="0">
+          </div>
+          <div class="form-group">
+            <label for="rNumber">R#</label>
+            <input type="text" id="rNumber" placeholder="مثال: R158" dir="ltr">
+          </div>
+          <div class="form-group" style="flex: 0 0 auto;">
+            <button class="btn btn-primary" onclick="saveRow()" id="saveBtn">إضافة</button>
+            <button class="btn" style="background:#e2e8f0;color:#475569;margin-right:8px;display:none;" id="cancelBtn" onclick="cancelEdit()">إلغاء</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>البيانات الحالية <span class="count-badge" id="countBadge">0</span></h3>
+        <div id="editTableContainer"></div>
+      </div>
+    </div>
+
+    <footer>
+      البيانات محفوظة محلياً • يعمل بدون إنترنت بعد التثبيت
+    </footer>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'ethmar_storage_data_v1';
+
+    // البيانات الأولية من الصورة
+    const initialData = [
+      { r: 'R143', pivot: 12 },
+      { r: 'R144', pivot: 16 },
+      { r: 'R145', pivot: 28 },
+      { r: 'R147', pivot: 17 },
+      { r: 'R146', pivot: 15 },
+      { r: 'R148', pivot: 6 },
+      { r: 'R149', pivot: 5 },
+      { r: 'R150', pivot: 8 },
+      { r: 'R152', pivot: 20 },
+      { r: 'R153', pivot: 22 },
+      { r: 'R151', pivot: 3 },
+      { r: 'R154', pivot: 1 },
+      { r: 'R155', pivot: 31 },
+      { r: 'R156', pivot: 23 },
+      { r: 'R157', pivot: 10 },
+      { r: '', pivot: 13 }
+    ];
+
+    let data = [];
+    let editIndex = -1;
+    let deferredPrompt = null;
+
+    function loadData() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          data = JSON.parse(saved);
+        } else {
+          data = [...initialData];
+          saveToStorage();
+        }
+      } catch (e) {
+        data = [...initialData];
+      }
+    }
+
+    function saveToStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      if (tab === 'view') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('view-tab').classList.add('active');
+        renderViewTable();
+      } else {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('edit-tab').classList.add('active');
+        renderEditTable();
+      }
+    }
+
+    function showMsg(text, type = 'success') {
+      const box = document.getElementById('msgBox');
+      box.textContent = text;
+      box.className = 'msg ' + type;
+      setTimeout(() => {
+        box.className = 'msg';
+        box.textContent = '';
+      }, 3000);
+    }
+
+    function renderViewTable() {
+      const container = document.getElementById('viewTableContainer');
+      const query = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+
+      let filtered = data;
+      if (query) {
+        filtered = data.filter(row =>
+          (row.r || '').toLowerCase().includes(query) ||
+          String(row.pivot).includes(query)
+        );
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="empty-state">لا توجد بيانات مطابقة</div>';
+        return;
+      }
+
+      let html = `
+        <table>
+          <thead>
+            <tr>
+              <th>Pivot no.</th>
+              <th>R#</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      filtered.forEach((row) => {
+        html += `
+          <tr>
+            <td>${row.pivot}</td>
+            <td><strong>${row.r || '—'}</strong></td>
+          </tr>
+        `;
+      });
+
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    function renderEditTable() {
+      const container = document.getElementById('editTableContainer');
+      document.getElementById('countBadge').textContent = data.length;
+
+      if (data.length === 0) {
+        container.innerHTML = '<div class="empty-state">لا توجد بيانات بعد — أضف صفاً جديداً أعلاه</div>';
+        return;
+      }
+
+      let html = `
+        <table>
+          <thead>
+            <tr>
+              <th>Pivot no.</th>
+              <th>R#</th>
+              <th>إجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      data.forEach((row, i) => {
+        const isEditing = editIndex === i;
+        html += `
+          <tr class="${isEditing ? 'edit-row' : ''}">
+            <td>${row.pivot}</td>
+            <td><strong>${row.r || '—'}</strong></td>
+            <td>
+              <div class="actions">
+                <button class="btn btn-edit" onclick="startEdit(${i})">تعديل</button>
+                <button class="btn btn-danger" onclick="deleteRow(${i})">حذف</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    function startEdit(index) {
+      editIndex = index;
+      const row = data[index];
+      document.getElementById('rNumber').value = row.r || '';
+      document.getElementById('pivotNo').value = row.pivot;
+      document.getElementById('formTitle').textContent = 'تعديل الصف';
+      document.getElementById('saveBtn').textContent = 'حفظ التعديل';
+      document.getElementById('cancelBtn').style.display = 'inline-block';
+      renderEditTable();
+      document.getElementById('pivotNo').focus();
+    }
+
+    function cancelEdit() {
+      editIndex = -1;
+      document.getElementById('rNumber').value = '';
+      document.getElementById('pivotNo').value = '';
+      document.getElementById('formTitle').textContent = 'إضافة صف جديد';
+      document.getElementById('saveBtn').textContent = 'إضافة';
+      document.getElementById('cancelBtn').style.display = 'none';
+      renderEditTable();
+    }
+
+    function saveRow() {
+      const r = document.getElementById('rNumber').value.trim();
+      const pivotVal = document.getElementById('pivotNo').value.trim();
+
+      if (pivotVal === '' || isNaN(Number(pivotVal))) {
+        showMsg('من فضلك أدخل رقم Pivot صحيح', 'error');
+        return;
+      }
+
+      const pivot = Number(pivotVal);
+
+      if (editIndex >= 0) {
+        data[editIndex] = { r, pivot };
+        showMsg('تم حفظ التعديل بنجاح');
+      } else {
+        data.push({ r, pivot });
+        showMsg('تمت الإضافة بنجاح');
+      }
+
+      saveToStorage();
+      cancelEdit();
+      renderEditTable();
+    }
+
+    function deleteRow(index) {
+      if (!confirm('هل أنت متأكد من حذف هذا الصف؟')) return;
+      data.splice(index, 1);
+      if (editIndex === index) cancelEdit();
+      else if (editIndex > index) editIndex--;
+      saveToStorage();
+      showMsg('تم الحذف');
+      renderEditTable();
+    }
+
+    // PWA: Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('SW registered', reg.scope))
+          .catch(err => console.log('SW failed', err));
+      });
+    }
+
+    // PWA: Install prompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installBanner').classList.add('show');
+    });
+
+    document.getElementById('installBtn')?.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        document.getElementById('installBanner').classList.remove('show');
+      }
+      deferredPrompt = null;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      document.getElementById('installBanner').classList.remove('show');
+      deferredPrompt = null;
+    });
+
+    // تهيئة
+    loadData();
+    renderViewTable();
+    renderEditTable();
+  </script>
+</body>
+</html>
